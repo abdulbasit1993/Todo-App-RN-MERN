@@ -13,7 +13,10 @@ import {
 import axios from 'axios';
 import {COLORS} from '../utils/colors';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
+import Snackbar from 'react-native-snackbar';
+import {duration} from 'moment';
 
 const width = Dimensions.get('window').width;
 
@@ -34,7 +37,15 @@ const TodoList = () => {
       .then(response => {
         setTodos(response.data);
       })
-      .catch(err => console.error('Error: ', err));
+      .catch(err => {
+        console.error('Error: ', err);
+        Snackbar.show({
+          text: '' + err,
+          duration: Snackbar.LENGTH_LONG,
+          backgroundColor: 'red',
+          textColor: COLORS.WHITE,
+        });
+      });
   };
 
   const completeTodo = async id => {
@@ -84,34 +95,59 @@ const TodoList = () => {
       <Text style={styles.heading}>Welcome to Todo List App!</Text>
       <Text style={styles.heading}>Your Tasks</Text>
 
-      <View style={styles.todosContainer}>
-        <FlatList
-          data={todos}
-          renderItem={({item}) => (
-            <View style={styles.todo}>
-              <TouchableOpacity onPress={() => completeTodo(item._id)}>
-                <Text
-                  style={item.complete ? styles.completedStyle : styles.text}>
-                  {item.text}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteTodo}
-                onPress={() => deleteTodo(item._id)}>
-                <Text style={{color: COLORS.WHITE}}>X</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
+      {todos.length == 0 ? (
+        <View style={styles.center}>
+          <MaterialCommunityIcon
+            name="note-multiple"
+            size={90}
+            color={COLORS.LIGHTALT}
+          />
+          <Text style={styles.noTasksText}>No Tasks Added</Text>
+        </View>
+      ) : (
+        <>
+          <View style={styles.todosContainer}>
+            <FlatList
+              data={todos}
+              renderItem={({item}) => (
+                <View style={styles.todo}>
+                  <View style={{marginRight: 10}}>
+                    <TouchableOpacity onPress={() => completeTodo(item._id)}>
+                      <MaterialCommunityIcon
+                        name={
+                          item.complete
+                            ? 'checkbox-marked-outline'
+                            : 'checkbox-blank-outline'
+                        }
+                        size={26}
+                        color={'#FFF'}
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => {
-          setModalActive(true);
-        }}>
-        <MaterialIcon name="add" size={32} color={COLORS.LIGHT} />
-      </TouchableOpacity>
+                  <Text
+                    style={item.complete ? styles.completedStyle : styles.text}>
+                    {item.text}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.deleteTodo}
+                    onPress={() => deleteTodo(item._id)}>
+                    <Text style={{color: COLORS.WHITE}}>X</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => {
+              setModalActive(true);
+            }}>
+            <MaterialIcon name="add" size={32} color={COLORS.LIGHT} />
+          </TouchableOpacity>
+        </>
+      )}
 
       <Modal
         isVisible={modalActive}
@@ -253,4 +289,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: COLORS.WHITE,
   },
+  noTasksText: {fontSize: 26, color: COLORS.LIGHT, marginTop: 10},
+  center: {flex: 1, alignItems: 'center', justifyContent: 'center'},
 });

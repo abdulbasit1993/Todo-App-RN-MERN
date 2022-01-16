@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "build": "cd android && ./gradlew clean && react-native bundle --platform android --dev false --entry-file index.js --bundle-output ./app/src/main/assets/index.android.bundle --assets-dest ./app/src/main/res/ && ./gradlew assembleDebug",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -19,6 +20,7 @@
     "react-native-modal": "^13.0.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",
+    "react-native-snackbar": "^2.4.0",
     "react-native-vector-icons": "^9.0.0"
   },
   "devDependencies": {
