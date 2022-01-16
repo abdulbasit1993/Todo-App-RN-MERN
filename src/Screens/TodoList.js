@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   StatusBar,
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 import {COLORS} from '../utils/colors';
@@ -57,19 +58,24 @@ const TodoList = () => {
   };
 
   const addTodo = async () => {
-    await axios
-      .post(`${API_BASE}/todo/new`, {
-        text: newTodo,
-      })
-      .then(function (response) {
-        const data = response.data;
-        setTodos([...todos, data]);
-        setModalActive(false);
-        setNewTodo('');
-      })
-      .catch(function (error) {
-        console.log('Error: ', error);
-      });
+    if (newTodo == '') {
+      Alert.alert('Error!', 'Please enter a task first!');
+      return;
+    } else {
+      await axios
+        .post(`${API_BASE}/todo/new`, {
+          text: newTodo,
+        })
+        .then(function (response) {
+          const data = response.data;
+          setTodos([...todos, data]);
+          setModalActive(false);
+          setNewTodo('');
+        })
+        .catch(function (error) {
+          console.log('Error: ', error);
+        });
+    }
   };
 
   return (
